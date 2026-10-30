@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizator logów WWW</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Analizator logów serwera WWW</h1>
+        <p>Panel monitorowania ruchu HTTP</p>
+    </header>
+
+    <main>
+
+        <section class="stats">
+
+            <div class="card">
+                <h3>Wszystkie żądania</h3>
+                <p>{{ total }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Unikalne adresy IP</h3>
+                <p>{{ unique_ips }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Przesłane dane</h3>
+                <p>{{ total_bytes }} B</p>
+            </div>
+
+        </section>
+
+        <section class="panel">
+            <h2>Kody odpowiedzi HTTP</h2>
+
+            {% for status, count in statuses.items() %}
+                <div class="status-row">
+                    <span>{{ status }}</span>
+                    <strong>{{ count }} żądań</strong>
+                </div>
+            {% else %}
+                <p>Brak danych do wyświetlenia.</p>
+            {% endfor %}
+        </section>
+
+        <section class="panel">
+            <h2>Adresy IP użytkowników</h2>
+
+            {% for ip, count in ips.items() %}
+                <div class="status-row">
+                    <span>{{ ip }}</span>
+                    <strong>{{ count }} żądań</strong>
+                </div>
+            {% else %}
+                <p>Brak adresów IP.</p>
+            {% endfor %}
+        </section>
+
+        <section class="panel">
+            <h2>Szczegółowa lista żądań</h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Adres IP</th>
+                            <th>Metoda</th>
+                            <th>Ścieżka</th>
+                            <th>Status</th>
+                            <th>Rozmiar</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.ip }}</td>
+                            <td>{{ log.method }}</td>
+                            <td>{{ log.path }}</td>
+                            <td>
+                                <span class="status status-{{ log.status }}">
+                                    {{ log.status }}
+                                </span>
+                            </td>
+                            <td>{{ log.size }} B</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">Brak rekordów logów.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Projekt edukacyjny – Tydzień 2: Programowanie i WWW</p>
+    </footer>
+
+</body>
+</html>
